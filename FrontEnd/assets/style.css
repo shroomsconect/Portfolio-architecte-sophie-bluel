@@ -62,6 +62,27 @@ section {
 	margin: 50px 0
 }
 
+.message{
+	height: 60px;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	border-radius: 10px;
+}
+#login-error,
+#manage-works-error{
+	display: none;
+	background-color: #ffa6a6;
+}
+#login-success{
+	display: none;
+	background-color: #cdffc9;
+}
+
+h1#to-home {
+	cursor: pointer;
+}
+
 h1{
 	display: flex;
 	flex-direction: column;
@@ -95,6 +116,9 @@ nav li {
 	font-size: 1.2em;
 	cursor: pointer;
 }
+nav li#logout-button {
+	display: none;
+}
 nav li a,
 nav li a:active,
 nav li a:hover,
@@ -112,7 +136,7 @@ li:hover {
 	align-items: center;
 }
 #introduction figure {
-	flex: 1
+	flex: 1;
 }
 #introduction img {
 	display: block;
@@ -121,7 +145,7 @@ li:hover {
 }
 
 #introduction article {
-	flex: 1
+	flex: 1;
 }
 #introduction h2 {
 	margin-bottom: 1em;
@@ -134,6 +158,17 @@ li:hover {
 	text-align: center;
 	margin-bottom: 1em;
 }
+#portfolio h2 span#to-manage-works {
+	display: none;
+	cursor: pointer;
+	font-family: 'Work Sans';
+	color: black;
+	font-size: 14px;
+	margin-left: 40px;
+}
+#portfolio h2 span#to-manage-works i {
+	margin-right: 5px;
+}
 .gallery {
 	width: 100%;
 	display: grid;
@@ -144,52 +179,76 @@ li:hover {
 
 .gallery img {
 	width: 100%;
+}
 
+#login-content,
+.open-login #page-content {
+	display: none;
 }
-#contact {
+.open-login #login-content {
+	display: block;
+}
+
+#contact,
+#login {
 	width: 50%;
-margin: auto;
+	margin: auto;
 }
-#contact > * {
+#contact > *,
+#login > * {
 	text-align: center;
 
 }
-#contact h2{
+#contact h2,
+#login h2{
 	margin-bottom: 20px;
 }
-#contact form {
+#contact form,
+#login form {
 	text-align: left;
 	margin-top:30px;
 	display: flex;
 	flex-direction: column;
 }
+#login a {
+	color: #3D3D3D;
+}
 
-#contact input {
+#contact input,
+#login input {
 	height: 50px;
 	font-size: 1.2em;
 	border: none;
 	box-shadow: 0px 4px 14px rgba(0, 0, 0, 0.09);
 }
-#contact label {
+#contact label,
+#login label {
 	margin: 2em 0 1em 0;
 }
-#contact textarea {
+#contact textarea,
+#login textarea {
 	border: none;
 	box-shadow: 0px 4px 14px rgba(0, 0, 0, 0.09);
 }
 
-input[type="submit"]{
+input[type="submit"],
+button,
+.upload-image-work-button{
 	font-family: 'Syne';
 	font-weight: 700;
 	color: white;
 	background-color: #1D6154;
-	margin : 2em auto ;
+	margin : 2em auto;
+	min-height: 50px;
 	width: 180px;
 	text-align: center;
-	border-radius: 60px ;
+	border: none;
+	border-radius: 60px;
 	cursor: pointer;
 }
-input[type="submit"]:hover{
+input[type="submit"]:hover,
+button:hover,
+.upload-image-work-button{
 	background-color: #0E2F28;
 }
 
@@ -200,7 +259,7 @@ footer nav ul {
 }
 
 
-/******** Filters ********/
+/******** Filters and Manage Works ********/
 .filter-container {
 	margin: 50px 0;
 	display: flex;
@@ -208,19 +267,187 @@ footer nav ul {
 }
 
 button.filter {
-	font-family: 'Syne';
-	font-weight: 700;
 	color: #1D6154;
-	cursor: pointer;
-	height: 35px;
-	min-width: 100px;
 	border: 1px solid #1D6154;
+	background: none;
+	min-width: 100px;
+	height: 35px;
 	padding: 0 10px;
 	margin: 0 10px;
-	background: none;
 	border-radius: 20px;
 }
-button.selected {
+button.filter.selected {
 	color: white;
 	background-color: #1D6154;
+}
+
+
+#manage-works {
+	display: none;
+	position: absolute;
+	justify-content: center;
+	align-items: center;
+	z-index: 10;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+}
+#manage-works.open-manage-works {
+	display: flex;
+}
+
+#manage-works .shadow-bg {
+	background-color: rgba(0, 0, 0, 0.5);
+	height: 100%;
+	width: 100%;
+	cursor: pointer;
+	position: absolute;
+}
+#manage-works .window {
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
+	background-color: white;
+	position: absolute;
+	z-index: 11;
+	height: 700px;
+	width: 630px;
+	border-radius: 10px;
+	top: 500px;
+}
+
+#manage-works .window .manage-works-message {
+	position: absolute;
+	width: 100%;
+	bottom: 640px;
+	z-index: 12;
+}
+
+#manage-works .window .header {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	height: 100px;
+	margin: 0 30px;
+}
+
+#manage-works .window .main,
+#manage-works .window .footer {
+	display: flex;
+	flex-direction: column;
+}
+
+#manage-works .window .main {
+	margin: 0 auto;
+	width: 75%;
+	height: 100%;
+	overflow-x: auto;
+}
+
+#manage-works .window .main h3 {
+	text-align: center;
+	font-size: 1.85714em;
+	margin-bottom: 1.5em;
+}
+#manage-works .window .main ul {
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: left;
+}
+#manage-works .window .main li {
+	width: 17%;
+	position: relative;
+	margin: 15px 5px;
+}
+#manage-works .window .main li img {
+	width: 100%;
+}
+#manage-works .window .main li i {
+	position: absolute;
+	right: 5px;
+	top: 5px;
+	width: 17px;
+	line-height: 17px;
+	text-align: center;
+	background-color: black;
+	color: white;
+	font-size: 11px;
+	border-radius: 3px;
+}
+
+#manage-works .window .main i.fa-trash-can,
+#manage-works .window .header i {
+	cursor: pointer;
+}
+
+#manage-works .window hr {
+	color: #B3B3B3;
+	width: 75%;
+}
+
+#manage-works.first-page i.fa-arrow-left {
+	display: none;
+}
+#manage-works.first-page .window .header {
+	justify-content: right;
+}
+
+#manage-works #manage-works-action {
+	font-size: 1.2em;
+	width: 240px;
+}
+#manage-works #manage-works-action:disabled {
+	background-color: #A7A7A7;
+	cursor: not-allowed;
+}
+
+#manage-works #create-work-form {
+	display: flex;
+	flex-direction: column;
+	padding: 0 10px;
+}
+#manage-works #create-work-form .upload-image-work {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	background-color: #E8F1F6;
+	padding: 20px 0;
+	border-radius: 3px;
+}
+#manage-works #create-work-form .upload-image-work i {
+	color: #B9C5CC;
+	font-size: 5em;
+}
+#manage-works #create-work-form .upload-image-work img {
+	max-width: 400px;
+	max-height: 150px;
+}
+#manage-works #create-work-form .upload-image-work .upload-image-work-button {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	font-family: 'Work Sans';
+	color: #306685;
+	background-color: #B9C5CC;
+	min-height: 36px;
+	margin: 1em auto;
+}
+#manage-works #create-work-form .upload-image-work p {
+	font-size: 10px;
+}
+
+#manage-works #create-work-form > label {
+	margin-top: 40px;
+	margin-bottom: 10px;
+}
+#manage-works #create-work-form > input,
+#manage-works #create-work-form > select {
+	height: 50px;
+	border: none;
+	box-shadow: 0 4px 14px 0 rgba(0,0,0,0.09);
+	background-color: white;
+}
+#manage-works #create-work-form > select {
+	cursor: pointer;
 }
