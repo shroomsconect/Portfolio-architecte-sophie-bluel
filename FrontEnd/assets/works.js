@@ -13,8 +13,36 @@ async function refresh_works()
     const response = await fetch("http://localhost:5678/api/works");
     works = await response.json();
 
-    set_type_filter( "all" );
+    set_type_filter( "tous" );
     show_works( works );
+}
+
+
+/**
+ * @name add_filters_button
+ * Ajoute les boutons de filtre à la balise HTML de classe filter-container
+ * @return { Void }
+ */
+async function add_filters_button()
+{
+    const categories_query = await fetch("http://localhost:5678/api/categories");
+    const categories = await categories_query.json();
+
+    const filters_container_list = document.querySelectorAll( ".filter-container" );
+
+    for( let index_filter = 0; index_filter < filters_container_list.length; index_filter++ )
+    {
+        const filters_container = filters_container_list[index_filter];
+
+        filters_container.innerHTML = '<button class="filter" data-category-name="tous">Tous</button>';
+
+        for( let index_category = 0; index_category < categories.length; index_category++ )
+        {
+            const category = categories[index_category];
+
+            filters_container.innerHTML += `<button class="filter" data-category-name="${category.name}">${category.name}</button>`;
+        }
+    }
 }
 
 
@@ -22,7 +50,7 @@ async function refresh_works()
  * @name set_type_filter
  * Marque par une classe, le bouton correspondant au filtre sélectionné
  * Ce qui permet de différencier le filtre actuel des autres
- * @param { String } type, nom du type de filtre, ex: all, object, apartment, hotel-restaurant
+ * @param { String } type, nom du type de filtre, ex: tous, Objets, Appartements, Hôtels & restaurants
  * @return { Void }
  */
 function set_type_filter( type )
@@ -34,7 +62,7 @@ function set_type_filter( type )
         const filter = filters[index];
         filter.classList.remove( "selected" );
 
-        if( filter.classList.contains( `filter-${type}` ) )
+        if( filter.dataset.categoryName == type )
         {
             filter.classList.add( "selected" );
         }
@@ -196,7 +224,6 @@ function delete_work( elem )
     .then(
         ( response ) =>
         {
-            console.log(response);
             if( response.status == 200 || response.status == 204 )
             {
                 document.querySelector( `#manage-works .work-${work_id}` ).outerHTML = "";
@@ -516,12 +543,12 @@ function listener_manage_works_page()
  * @use refresh_works()
  * @return { Void }
  */
-export function listener_works()
+export async function listener_works()
 {
-    const filter_all_list = document.querySelectorAll( ".filter-container .filter-all" );
-    const filter_object_list = document.querySelectorAll( ".filter-container .filter-object" );
-    const filter_apartment_list = document.querySelectorAll( ".filter-container .filter-apartment" );
-    const filter_hotel_restaurant_list = document.querySelectorAll( ".filter-container .filter-hotel-restaurant" );
+    await add_filters_button();
+
+    const filter_by_all_list = document.querySelectorAll( '.filter-container .filter[data-category-name="tous"]' );
+    const filter_by_category_list = document.querySelectorAll( '.filter-container .filter:not([data-category-name="tous"])' );
 
     const to_manage_works = document.getElementById( "to-manage-works" );
     const close_manage_works = document.querySelector( "#manage-works .fa-xmark" );
@@ -529,77 +556,41 @@ export function listener_works()
     const back_manage_works_button = document.querySelector( "#manage-works .fa-arrow-left" );
     const action_manage_works_button = document.getElementById( "manage-works-action" );
 
+/********* Filter by category *********/
+
+    for( let index = 0; index < filter_by_category_list.length; index++ )
+    {
+        const filter_by_category = filter_by_category_list[index];
+            
+        filter_by_category.addEventListener(
+            "click"
+            ,()=>
+                {
+                    const category_name = filter_by_category.dataset.categoryName;
+
+                    set_type_filter( category_name );
+
+                    const works_filtered = works.filter(
+                        function(work){
+                            return work.category.name === category_name;
+                        }
+                    );
+                    show_works( works_filtered );
+                }
+        );
+    }
+
 /********* Filter by All *********/
-    for( let index = 0; index < filter_all_list.length; index++ )
+    for( let index = 0; index < filter_by_all_list.length; index++ )
     {
-        const filter_all = filter_all_list[index];
+        const filter_by_all = filter_by_all_list[index];
         
-        filter_all.addEventListener(
+        filter_by_all.addEventListener(
             "click"
             ,()=>
                 {
-                    set_type_filter( "all" );
+                    set_type_filter( "tous" );
                     show_works( works );
-                }
-        );
-    }
-
-/********* Filter by Object *********/
-    for( let index = 0; index < filter_object_list.length; index++ )
-    {
-        const filter_object = filter_object_list[index];
-        
-        filter_object.addEventListener(
-            "click"
-            ,()=>
-                {
-                    set_type_filter( "object" );
-                    const works_filtered = works.filter(
-                        function(work){
-                            return work.category.name === "Objets";
-                        }
-                    );
-                    show_works( works_filtered );
-                }
-        );
-    }
-
-/********* Filter by Apartement *********/
-    for( let index = 0; index < filter_apartment_list.length; index++ )
-    {
-        const filter_apartment = filter_apartment_list[index];
-        
-        filter_apartment.addEventListener(
-            "click"
-            ,()=>
-                {
-                    set_type_filter( "apartment" );
-                    const works_filtered = works.filter(
-                        function(work){
-                            return work.category.name === "Appartements";
-                        }
-                    );
-                    show_works( works_filtered );
-                }
-        );
-    }
-
-/********* Filter by Hotel and Restaurant *********/
-    for( let index = 0; index < filter_hotel_restaurant_list.length; index++ )
-    {
-        const filter_hotel_restaurant = filter_hotel_restaurant_list[index];
-        
-        filter_hotel_restaurant.addEventListener(
-            "click"
-            ,()=>
-                {
-                    set_type_filter( "hotel-restaurant" );
-                    const works_filtered = works.filter(
-                        function(work){
-                            return work.category.name === "Hotels & restaurants";
-                        }
-                    );
-                    show_works( works_filtered );
                 }
         );
     }

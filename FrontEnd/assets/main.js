@@ -1,7 +1,7 @@
 import { listener_works } from "./works.js";
 import { listener_login } from "./login.js";
 
-listener_works();
+await listener_works();
 
 listener_login();
 
